@@ -5,6 +5,7 @@ import { usePathname, useRouter } from 'next/navigation'
 import { ArrowRight, ChevronDown, MapPin, Minus, Plus, Search, ShoppingBasket, UserRound } from 'lucide-react'
 import { useEffect, useMemo, useState, useSyncExternalStore } from 'react'
 import { cartCount, cartItems, cartTotal, categoryFor, categories, categoryTint, money, navLinks, pageMaxWidth, products, productUrl, type Product } from '@/lib/store-data'
+import { useAddToCartAnimation } from '@/components/animations/add-to-cart-effect'
 
 export type Cart = Record<string | number, any>
 
@@ -178,11 +179,13 @@ export function Header({ count = 0, query = '', onQueryChange }: { count?: numbe
         </Link>
       )}
       
-      <button onClick={openCart} className="relative flex items-center gap-2 rounded-full bg-zinc-900 px-5 py-2.5 text-sm font-bold text-white shadow-lg shadow-zinc-900/20 hover:bg-zinc-800 hover:shadow-zinc-900/30 hover:-translate-y-0.5 transition-all ml-1 group">
-        <ShoppingBasket size={18} className="group-hover:animate-bounce" />
-        <span className="hidden sm:inline">Cart</span>
-        {count > 0 && <span className="absolute -right-1 -top-1 grid size-5 place-items-center rounded-full bg-emerald-500 text-[10px] font-black text-white shadow-sm ring-2 ring-white animate-in zoom-in-50">{count}</span>}
-      </button>
+      <div className="flex items-center gap-2 ml-1">
+        <button id="cart-icon" onClick={openCart} className="relative flex items-center gap-2 rounded-full bg-zinc-900 px-5 py-2.5 text-sm font-bold text-white shadow-lg shadow-zinc-900/20 hover:bg-zinc-800 hover:shadow-zinc-900/30 hover:-translate-y-0.5 transition-all group">
+          <ShoppingBasket size={18} className="group-hover:animate-bounce" />
+          <span className="hidden sm:inline">Cart</span>
+          {count > 0 && <span className="absolute -right-1 -top-1 grid size-5 place-items-center rounded-full bg-emerald-500 text-[10px] font-black text-white shadow-sm ring-2 ring-white animate-in zoom-in-50">{count}</span>}
+        </button>
+      </div>
         </div>
       </header>
     </div>
@@ -263,11 +266,13 @@ export function Footer() {
 export function ProductCard({ product, count = 0, onUpdate }: { product: any; count?: number; onUpdate?: (product: any, amount: number) => void }) { 
   const id = product._id || product.id;
   const oldP = product.oldPrice || product.old;
-  const handleAdd = () => {
+  const { triggerAnimation } = useAddToCartAnimation();
+  const handleAdd = (e: React.MouseEvent) => {
     onUpdate?.(product, 1);
     showToast(product.name, product.image);
+    triggerAnimation(e.clientX, e.clientY);
   };
-  return <article className="group relative flex flex-col rounded-[24px] border border-zinc-100/80 bg-white p-3 shadow-[0_2px_20px_rgb(0,0,0,0.02)] transition-all duration-300 hover:-translate-y-1.5 hover:shadow-[0_20px_40px_rgb(16,185,129,0.08)] hover:border-emerald-100"><Link href={productUrl(id)} className="relative block overflow-hidden rounded-[18px] bg-zinc-50/50"><img src={product.image} alt={product.name} className="aspect-square w-full object-cover transition-transform duration-700 group-hover:scale-105 mix-blend-multiply" />{(product.isDeal || product.deal) && <span className="absolute left-2.5 top-2.5 rounded-full bg-gradient-to-r from-rose-500 to-orange-500 px-2.5 py-1 text-[9px] font-black tracking-widest text-white shadow-md shadow-rose-500/20">HOT DEAL</span>}</Link><div className="flex flex-1 flex-col px-2 pb-2 pt-4"><Link href={productUrl(id)} className="block truncate text-[15px] font-bold text-zinc-800 group-hover:text-emerald-600 transition-colors">{product.name}</Link><p className="mt-0.5 text-xs font-medium text-zinc-400">{product.detail}</p><div className="mt-auto pt-4 flex items-center justify-between"><div><span className="text-[17px] font-black text-zinc-900 tracking-tight">{money(product.price)}</span> {oldP && <del className="text-xs font-semibold text-zinc-300 ml-1.5">{money(oldP)}</del>}</div>{count > 0 && onUpdate ? <div className="flex items-center gap-1 rounded-full bg-emerald-50 p-1 text-emerald-700 shadow-inner border border-emerald-100"><button onClick={() => onUpdate(product, -1)} aria-label={`Remove one ${product.name}`} className="hover:bg-white rounded-full p-1.5 transition-colors shadow-sm"><Minus size={14} strokeWidth={3} /></button><span className="min-w-6 text-center text-sm font-bold tabular-nums">{count}</span><button onClick={() => onUpdate(product, 1)} aria-label={`Add one ${product.name}`} className="bg-emerald-500 text-white hover:bg-emerald-600 rounded-full p-1.5 transition-colors shadow-md shadow-emerald-500/30"><Plus size={14} strokeWidth={3} /></button></div> : <button onClick={handleAdd} className="rounded-full border border-zinc-200 bg-white px-4 py-2 text-xs font-black text-zinc-800 transition-all hover:bg-emerald-500 hover:border-emerald-500 hover:text-white shadow-sm hover:shadow-md hover:shadow-emerald-500/20 active:scale-95">ADD</button>}</div></div></article> 
+  return <article className="group relative flex flex-col rounded-[24px] border border-zinc-100/80 bg-white p-3 shadow-[0_2px_20px_rgb(0,0,0,0.02)] transition-all duration-300 hover:-translate-y-1.5 hover:shadow-[0_20px_40px_rgb(16,185,129,0.08)] hover:border-emerald-100 dark:bg-zinc-900 dark:border-zinc-800"><Link href={productUrl(id)} className="relative block overflow-hidden rounded-[18px] bg-zinc-50/50 dark:bg-zinc-800/50"><img src={product.image} alt={product.name} className="aspect-square w-full object-cover transition-transform duration-700 group-hover:scale-105 mix-blend-multiply dark:mix-blend-normal" />{(product.isDeal || product.deal) && <span className="absolute left-2.5 top-2.5 rounded-full bg-gradient-to-r from-rose-500 to-orange-500 px-2.5 py-1 text-[9px] font-black tracking-widest text-white shadow-md shadow-rose-500/20">HOT DEAL</span>}</Link><div className="flex flex-1 flex-col px-2 pb-2 pt-4"><Link href={productUrl(id)} className="block truncate text-[15px] font-bold text-zinc-800 dark:text-zinc-100 group-hover:text-emerald-600 transition-colors">{product.name}</Link><p className="mt-0.5 text-xs font-medium text-zinc-400">{product.detail}</p><div className="mt-auto pt-4 flex items-center justify-between"><div><span className="text-[17px] font-black text-zinc-900 dark:text-zinc-100 tracking-tight">{money(product.price)}</span> {oldP && <del className="text-xs font-semibold text-zinc-300 ml-1.5">{money(oldP)}</del>}</div>{count > 0 && onUpdate ? <div className="flex items-center gap-1 rounded-full bg-emerald-50 dark:bg-emerald-950 p-1 text-emerald-700 dark:text-emerald-400 shadow-inner border border-emerald-100 dark:border-emerald-800"><button onClick={() => onUpdate(product, -1)} aria-label={`Remove one ${product.name}`} className="hover:bg-white dark:hover:bg-emerald-900 rounded-full p-1.5 transition-colors shadow-sm"><Minus size={14} strokeWidth={3} /></button><span className="min-w-6 text-center text-sm font-bold tabular-nums">{count}</span><button onClick={(e) => { onUpdate(product, 1); triggerAnimation(e.clientX, e.clientY); }} aria-label={`Add one ${product.name}`} className="bg-emerald-500 text-white hover:bg-emerald-600 rounded-full p-1.5 transition-colors shadow-md shadow-emerald-500/30"><Plus size={14} strokeWidth={3} /></button></div> : <button onClick={handleAdd} className="rounded-full border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-4 py-2 text-xs font-black text-zinc-800 dark:text-zinc-200 transition-all hover:bg-emerald-500 hover:border-emerald-500 hover:text-white dark:hover:text-white shadow-sm hover:shadow-md hover:shadow-emerald-500/20 active:scale-95">ADD</button>}</div></div></article> 
 }
 
 export function ProductGrid({ items, cart, update }: { items: any[]; cart: Cart; update: (product: any, amount: number) => void }) { return <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 sm:gap-4">{items.map((product) => {

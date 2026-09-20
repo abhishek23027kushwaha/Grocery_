@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { ArrowUpRight, ChartNoAxesCombined, IndianRupee, MoreHorizontal, Package, ShoppingBag, Users } from 'lucide-react'
 import { AdminButton, AdminShell, StatusBadge } from '@/components/admin-shell'
 import { useEffect, useState } from 'react'
+import { socket } from '@/lib/socket'
 
 const statIcons = { IndianRupee, ShoppingBag, Users, ChartNoAxesCombined }
 
@@ -35,6 +36,17 @@ export default function AdminOverview() {
       }
     };
     fetchDashboard();
+
+    // Listen for real-time order updates
+    socket.connect();
+    socket.on('new-order', fetchDashboard);
+    socket.on('order-status-updated', fetchDashboard); // Also update on status changes
+
+    return () => {
+      socket.off('new-order', fetchDashboard);
+      socket.off('order-status-updated', fetchDashboard);
+      socket.disconnect();
+    };
   }, []);
 
   return <AdminShell title="Good morning, admin" description="Here’s what’s happening with your store today." action={<AdminButton href="/admin/products">Add product</AdminButton>}>

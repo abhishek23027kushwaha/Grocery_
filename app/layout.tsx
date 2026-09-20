@@ -34,6 +34,7 @@ export const viewport: Viewport = {
 }
 
 import StoreProvider from '@/lib/store/StoreProvider'
+import { AddToCartAnimationProvider } from '@/components/animations/add-to-cart-effect'
 
 export default function RootLayout({
   children,
@@ -41,10 +42,12 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body className="antialiased">
         <StoreProvider>
-          {children}
+          <AddToCartAnimationProvider>
+            {children}
+          </AddToCartAnimationProvider>
         </StoreProvider>
         {process.env.NODE_ENV === 'production' && <Analytics />}
       </body>
