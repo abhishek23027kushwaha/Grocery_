@@ -43,11 +43,9 @@ It aims to solve the problem of complex and slow online grocery shopping by prov
 
 | Home Page | Shopping Cart |
 | :---: | :---: |
-| ![Home](https://via.placeholder.com/600x400?text=Home+Page+Screenshot) | ![Cart](https://via.placeholder.com/600x400?text=Cart+Screenshot) |
-| **Order Tracking** | **Admin Dashboard** |
-| ![Tracking](https://via.placeholder.com/600x400?text=Order+Tracking+Screenshot) | ![Admin](https://via.placeholder.com/600x400?text=Admin+Dashboard+Screenshot) |
-
-*(Note: Replace placeholders with actual screenshot paths)*
+| ![Home Page](./screenshots/home.png) | ![Shopping Cart](./screenshots/cart.png) |
+| **Checkout & Live Map** | **Admin / Orders Dashboard** |
+| ![Checkout](./screenshots/checkout.png) | ![Admin Dashboard](./screenshots/admin.png) |
 
 ## 📂 Folder Structure
 
@@ -64,6 +62,7 @@ blikit/
 ├── components/           # Reusable UI components (Shadcn, Base UI)
 ├── lib/                  # Utilities and database configuration
 ├── public/               # Static assets (images, icons)
+├── screenshots/          # App screenshots for documentation
 ├── server.ts             # Custom Node server (for Socket.io)
 ├── .env.local            # Environment variables
 └── package.json          # Project metadata and dependencies
